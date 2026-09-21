@@ -1,4 +1,6 @@
 [general]
+tracker=https://github.com/agusbudiharso/GeoVisual_Lineament/issues
+repository=https://github.com/agusbudiharso/GeoVisual_Lineament
 name=GeoVisual Lineament — Experimental Validation v7.2.2
 qgisMinimumVersion=3.22
 qgisMaximumVersion=4.99
