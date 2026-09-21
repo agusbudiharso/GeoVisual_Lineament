@@ -8,7 +8,7 @@ author=Agus Santoso Budiharso (developed with AI assistance)
 email=
 about=Preserves the v7.1 scientific detection core and adds a reproducible A0-A5 experimental validation framework from a common intermediate candidate set, candidate-level decision audit, validation metrics, manifest hashes, and MIN_AZ=2 sensitivity output. Outputs remain DEM-derived lineament candidates and require geological validation.
 category=Raster
-experimental=True
+experimental=False
 icon=icon.png
 
 changelog=7.2.2: Stability build. Direct GDAL downsample reading before full-array allocation, RAM guard, region/detection safety caps, UI event yielding, and QGIS 3.x/4.x compatibility retained. Scientific extraction and A0-A5 validation logic retained.

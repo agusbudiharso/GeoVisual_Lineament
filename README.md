@@ -1,4 +1,4 @@
-# GeoVisual Lineament v7.2.2 — Experimental Validation Build
+# GeoVisual Lineament v7.2.2 — Stable Release
 
 This build preserves the **v7.1 Refined Gestalt LINE scientific detection core** and adds an experimental framework to test the technical effect of **Continuity-Gated Evidence Refinement (CGER)**.
 
