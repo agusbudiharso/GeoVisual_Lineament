@@ -47,7 +47,7 @@ class GeoVisualLineamentPlugin:
     def __init__(self,iface):
         self.iface=iface; self.action=None
     def initGui(self):
-        self.action=QAction("GeoVisual Lineament — Experimental Validation v7.2.2",self.iface.mainWindow())
+        self.action=QAction("GeoVisual Lineament — Experimental Validation v7.2.3",self.iface.mainWindow())
         self.action.triggered.connect(self.run)
         self.iface.addPluginToMenu("&Geology",self.action)
         self.iface.addToolBarIcon(self.action)
@@ -62,7 +62,7 @@ class LineamentDialog(QDialog):
     def __init__(self,iface):
         super().__init__(iface.mainWindow())
         self.iface=iface; self.layers=[]; self.outdir=os.path.expanduser("~")
-        self.setWindowTitle("GeoVisual Lineament v7.2.2 — Stability Build")
+        self.setWindowTitle("GeoVisual Lineament v7.2.3 — Stability Build")
         self.resize(900,820)
 
         main=QVBoxLayout(self); tabs=QTabWidget(); main.addWidget(tabs)
@@ -125,7 +125,7 @@ class LineamentDialog(QDialog):
         )
         note.setWordWrap(True); lay.addWidget(note)
 
-        self.runbtn=QPushButton("RUN v7.2.2 STABLE EXTRACTION + A0–A5 VALIDATION"); self.runbtn.clicked.connect(self.process)
+        self.runbtn=QPushButton("RUN v7.2.3 STABLE EXTRACTION + A0–A5 VALIDATION"); self.runbtn.clicked.connect(self.process)
         lay.addWidget(self.runbtn)
 
         tabs.addTab(page,"Extraction")
@@ -583,9 +583,9 @@ class LineamentDialog(QDialog):
         pr.addFeatures(feats); mem.updateExtents()
         opt=QgsVectorFileWriter.SaveVectorOptions()
         opt.driverName="GPKG"; opt.layerName=name
-        opt.actionOnExistingFile=QgsVectorFileWriter.CreateOrOverwriteFile
+        opt.actionOnExistingFile=QgsVectorFileWriter.ActionOnExistingFile.CreateOrOverwriteFile
         res=QgsVectorFileWriter.writeAsVectorFormatV3(mem,path,QgsCoordinateTransformContext(),opt)
-        if res[0]!=QgsVectorFileWriter.NoError:
+        if res[0]!=QgsVectorFileWriter.WriterError.NoError:
             raise Exception("Vector write error: "+str(res[1]))
 
         if add_to_project:
@@ -709,13 +709,13 @@ class LineamentDialog(QDialog):
             for m in metrics:
                 q=dict(m); q.update({"precision":"NA_REFERENCE_REQUIRED","recall":"NA_REFERENCE_REQUIRED","F1":"NA_REFERENCE_REQUIRED","fragmentation_index":"NA_REFERENCE_REQUIRED","matched_length_ratio":"NA_REFERENCE_REQUIRED"}); w.writerow(q)
 
-        manifest={"build":"GeoVisual Lineament v7.2.2 Stability Build","timestamp":datetime.datetime.now().isoformat(),"input":input_path,"input_sha256":self._sha256(input_path),"qgis_version":getattr(Qgis,"QGIS_VERSION","unknown"),"python":sys.version,"platform":platform.platform(),"parameters":params,"arms":{a:len(v) for a,v in arms.items()},"notes":["All A0-A5 arms use the same common intermediate candidate set.","Precision/recall/F1/FI require an independent reference and are intentionally not fabricated.","A1 reproduces v7.1 CGER short-fragment decision logic."]}
+        manifest={"build":"GeoVisual Lineament v7.2.3 Stability Build","timestamp":datetime.datetime.now().isoformat(),"input":input_path,"input_sha256":self._sha256(input_path),"qgis_version":getattr(Qgis,"QGIS_VERSION","unknown"),"python":sys.version,"platform":platform.platform(),"parameters":params,"arms":{a:len(v) for a,v in arms.items()},"notes":["All A0-A5 arms use the same common intermediate candidate set.","Precision/recall/F1/FI require an independent reference and are intentionally not fabricated.","A1 reproduces v7.1 CGER short-fragment decision logic."]}
         try: manifest["plugin_sha256"]=self._sha256(__file__)
         except Exception: manifest["plugin_sha256"]="unavailable"
         with open(os.path.join(outdir,"experiment_manifest.json"),"w",encoding="utf-8") as f: json.dump(manifest,f,indent=2,ensure_ascii=False)
 
     def process(self):
-        # v7.2.2 stability build: direct GDAL downsample read avoids loading the full DEM
+        # v7.2.3 stability build: direct GDAL downsample read avoids loading the full DEM
         # into RAM before the performance cap is applied. Heavy scientific logic is unchanged.
         self.runbtn.setEnabled(False)
         try:
@@ -732,7 +732,7 @@ class LineamentDialog(QDialog):
             bw=max(1,int(math.ceil(w/float(perf))))
             bh=max(1,int(math.ceil(h/float(perf))))
 
-            # Read already resampled. This is the key RAM-stability change in v7.2.2.
+            # Read already resampled. This is the key RAM-stability change in v7.2.3.
             z=band.ReadAsArray(0,0,w,h,buf_xsize=bw,buf_ysize=bh,buf_type=gdal.GDT_Float32)
             if z is None: raise Exception("GDAL failed to read DEM.")
             z=np.asarray(z,dtype=np.float32)
@@ -836,7 +836,7 @@ class LineamentDialog(QDialog):
 
             self.progress.setValue(90); QApplication.processEvents()
             stamp=datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            outdir=os.path.join(self.outdir,"GeoVisual_v722_STABLE_"+stamp); os.makedirs(outdir,exist_ok=True)
+            outdir=os.path.join(self.outdir,"GeoVisual_v723_STABLE_"+stamp); os.makedirs(outdir,exist_ok=True)
             self._write_vectors(os.path.join(outdir,"All_Meaningful_Segments.gpkg"),"All_Meaningful_Segments",all_segments,lyr.crs(),gt,step)
             self._write_vectors(os.path.join(outdir,"Selected_Lineaments.gpkg"),"Selected_Lineaments",selected,lyr.crs(),gt,step)
             self._write_vectors(os.path.join(outdir,"Principal_Lineaments.gpkg"),"Principal_Lineaments",principal,lyr.crs(),gt,step)
@@ -848,7 +848,7 @@ class LineamentDialog(QDialog):
                 self._write_validation_package(outdir,common,arms,arm_metrics,lyr.crs(),gt,step,src,params)
 
             with open(os.path.join(outdir,"METHOD_REFERENCES.txt"),"w",encoding="utf-8") as f:
-                f.write("GeoVisual Lineament v7.2.2 — Stability Build\n\n")
+                f.write("GeoVisual Lineament v7.2.3 — Stability Build\n\n")
                 f.write("Scientific extraction and A0-A5 validation logic is retained from v7.2.1.\n")
                 f.write("Stability changes: direct GDAL downsample read, RAM guard, candidate/region guards, and UI event yielding.\n")
                 f.write("Sidiropoulou Velidou et al. (2015): Gaussian 5x5 sigma=0.8/S, scale S, 2x2 gradient, orientation region-growing, inertia rectangle, Helmholtz FAR epsilon-meaningful segments.\n")
@@ -860,11 +860,11 @@ class LineamentDialog(QDialog):
                     wr=csv.writer(f); wr.writerow(["raw_meaningful_detections","common_intermediate","A1_CGER_refined","selected","principal","selected_minaz2_sensitivity","read_rows","read_cols","source_rows","source_cols"]); wr.writerow([len(detections),len(common),len(all_segments),len(selected),len(principal),len(selected_minaz2),bh,bw,h,w])
 
             self.progress.setValue(100)
-            QMessageBox.information(self,"Finished","GeoVisual v7.2.2 stability run completed.\n\nMeaningful detections: %d\nA1 CGER refined: %d\nSelected: %d\nPrincipal: %d\n\nOutput: %s" % (len(detections),len(all_segments),len(selected),len(principal),outdir))
+            QMessageBox.information(self,"Finished","GeoVisual v7.2.3 stability run completed.\n\nMeaningful detections: %d\nA1 CGER refined: %d\nSelected: %d\nPrincipal: %d\n\nOutput: %s" % (len(detections),len(all_segments),len(selected),len(principal),outdir))
 
         except Exception as e:
             self.progress.setValue(0)
-            QMessageBox.critical(self,"GeoVisual Lineament v7.2.2",str(e))
+            QMessageBox.critical(self,"GeoVisual Lineament v7.2.3",str(e))
         finally:
             self.runbtn.setEnabled(True)
 

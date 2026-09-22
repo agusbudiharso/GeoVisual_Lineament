@@ -3,11 +3,11 @@ homepage=https://github.com/agusbudiharso/GeoVisual_Lineament/blob/main/README.m
 tracker=https://github.com/agusbudiharso/GeoVisual_Lineament/issues
 repository=https://github.com/agusbudiharso/GeoVisual_Lineament
 license=GPL-2.0-or-later
-name=GeoVisual Lineament — Experimental Validation v7.2.2
+name=GeoVisual Lineament — Experimental Validation v7.2.3
 qgisMinimumVersion=3.22
 qgisMaximumVersion=4.99
 description=Experimental validation build for DEM-derived lineament extraction with A0-A5 ablation of Continuity-Gated Evidence Refinement (CGER).
-version=7.2.2
+version=7.2.3
 author=Agus Santoso Budiharso (developed with AI assistance)
 email=agussbudiharso@gmail.com
 about=Preserves the v7.1 scientific detection core and adds a reproducible A0-A5 experimental validation framework from a common intermediate candidate set, candidate-level decision audit, validation metrics, manifest hashes, and MIN_AZ=2 sensitivity output. Outputs remain DEM-derived lineament candidates and require geological validation.
@@ -15,4 +15,4 @@ category=Raster
 experimental=False
 icon=icon.png
 
-changelog=7.2.2: Stability build. Direct GDAL downsample reading before full-array allocation, RAM guard, region/detection safety caps, UI event yielding, and QGIS 3.x/4.x compatibility retained. Scientific extraction and A0-A5 validation logic retained.
+changelog=7.2.3: Qt6/QGIS 4 compatibility patch for QgsVectorFileWriter scoped enums. Scientific extraction and A0-A5 validation logic unchanged.
